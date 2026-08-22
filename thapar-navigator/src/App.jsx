@@ -1,14 +1,16 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import {
-  Search, MapPin, X, ChevronRight,
+  MapPin, X, ChevronRight,
   Navigation, Clock, Star, Phone, AlertTriangle,
   Sun, Moon
 } from 'lucide-react';
 import { EMERGENCY_CONTACTS } from './contacts';
 import { CAT, LOCATIONS, TABS } from './data';
+import { LocationFilters } from './components/LocationFilters';
+import { filterLocations } from './utils/filterLocations';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -35,6 +37,14 @@ function MapController({ location }) {
   return null;
 }
 
+/**
+ * Create a themed Leaflet marker icon for a campus location.
+ *
+ * @param {string} category - Location category id.
+ * @param {boolean} isSelected - Whether the marker is selected.
+ * @param {string} theme - Active color theme.
+ * @returns {L.DivIcon} Configured Leaflet marker icon.
+ */
 function mkIcon(category, isSelected, theme) {
   const c   = CAT[category] || {};
   const col = c.color || '#6b7280';
@@ -76,6 +86,8 @@ function LocCard({ loc, isSelected, onSelect }) {
     <button
       id={`loc-card-${loc.id}`}
       onClick={() => onSelect(loc)}
+      aria-label={`Show ${loc.name} on map`}
+      aria-pressed={isSelected}
       className={`w-full text-left block p-2.5 rounded-xl mb-1.5 outline-none cursor-pointer transition-all duration-150 ${
         isSelected 
           ? 'bg-slate-200/50 dark:bg-white/10 border-slate-300 dark:border-white/20' 
@@ -123,6 +135,7 @@ function Detail({ loc, onClose }) {
         </div>
         <button
           onClick={onClose}
+          aria-label={`Close details for ${loc.name}`}
           className="bg-transparent border-none cursor-pointer p-1 rounded-md shrink-0 text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
         >
           <X size={15} />
@@ -147,7 +160,7 @@ function Detail({ loc, onClose }) {
 function PopupContent({ loc }) {
   const c = CAT[loc.category] || {};
   return (
-    <div>
+    <div aria-label={`Details for ${loc.name}`}>
       <p className="m-0 mb-1 font-bold text-[13px] text-slate-800 dark:text-slate-100 font-['Space_Grotesk']">{loc.name}</p>
       <p className="m-0 mb-2 text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
         <Clock size={10} /> {loc.timing}
@@ -162,30 +175,41 @@ function PopupContent({ loc }) {
 }
 
 function SOSModal({ onClose }) {
+  const closeButtonRef = useRef(null);
+
+  useEffect(() => {
+    closeButtonRef.current?.focus();
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   return (
-    <div className="fixed inset-0 bg-slate-900/60 dark:bg-[#04060c]/85 backdrop-blur-md z-[9999] flex items-center justify-center p-5">
-      <div className="fade-slide-in w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white/95 dark:bg-[#0f1423]/95 border border-red-500/30 rounded-2xl shadow-[0_24px_80px_rgba(0,0,0,0.3)] dark:shadow-[0_24px_80px_rgba(0,0,0,0.8),0_0_60px_rgba(239,68,68,0.15)] flex flex-col">
+    <div className="fixed inset-0 bg-slate-900/60 dark:bg-[#04060c]/85 backdrop-blur-md z-[9999] flex items-center justify-center p-5" role="presentation">
+      <div className="fade-slide-in w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white/95 dark:bg-[#0f1423]/95 border border-red-500/30 rounded-2xl shadow-[0_24px_80px_rgba(0,0,0,0.3)] dark:shadow-[0_24px_80px_rgba(0,0,0,0.8),0_0_60px_rgba(239,68,68,0.15)] flex flex-col" role="dialog" aria-modal="true" aria-labelledby="sos-title">
         <div className="p-6 border-b border-slate-200 dark:border-white/5 flex justify-between items-center sticky top-0 bg-white/95 dark:bg-[#0f1423]/95 backdrop-blur-md z-10">
           <div className="flex items-center gap-3.5">
             <div className="w-12 h-12 rounded-xl bg-red-500/15 border border-red-500/30 flex items-center justify-center animate-[pulseGlowRed_2s_infinite]">
               <AlertTriangle size={24} className="text-red-500" />
             </div>
             <div>
-              <h2 className="m-0 text-[22px] font-bold text-slate-900 dark:text-slate-50 font-['Space_Grotesk'] tracking-tight">Emergency SOS</h2>
+              <h2 id="sos-title" className="m-0 text-[22px] font-bold text-slate-900 dark:text-slate-50 font-['Space_Grotesk'] tracking-tight">Emergency SOS</h2>
               <p className="m-0 text-[13.5px] text-slate-500 dark:text-slate-400">Tap any number below to call instantly</p>
             </div>
           </div>
-          <button onClick={onClose} className="bg-slate-100 dark:bg-white/5 border-none cursor-pointer p-2.5 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors flex">
+          <button ref={closeButtonRef} onClick={onClose} aria-label="Close emergency contacts" className="bg-slate-100 dark:bg-white/5 border-none cursor-pointer p-2.5 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors flex">
             <X size={20} />
           </button>
         </div>
-        <div className="p-6">
+        <div className="p-6 max-[640px]:p-4">
           {EMERGENCY_CONTACTS.map((section, idx) => (
             <div key={idx} className="mb-7">
               <h3 className="m-0 mb-3 text-[12px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{section.category}</h3>
-              <div className="grid gap-3.5 grid-cols-[repeat(auto-fill,minmax(260px,1fr))]">
+              <div className="grid gap-3.5 grid-cols-[repeat(auto-fit,minmax(min(260px,100%),1fr))]">
                 {section.contacts.map((contact, cIdx) => (
-                  <a key={cIdx} href={`tel:${contact.phone.replace(/[^0-9+]/g, '')}`} className="no-underline group">
+                  <a key={cIdx} href={`tel:${contact.phone.replace(/[^0-9+]/g, '')}`} aria-label={`Call ${contact.name} at ${contact.phone}`} className="no-underline group">
                     <div className="p-3.5 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl transition-all duration-200 cursor-pointer flex items-center gap-3.5 group-hover:bg-red-50 dark:group-hover:bg-red-500/10 group-hover:border-red-200 dark:group-hover:border-red-500/30">
                       <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-500/10 flex items-center justify-center shrink-0">
                         <Phone size={18} className="text-red-500" />
@@ -227,16 +251,7 @@ export default function App() {
 
   const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
 
-  const locations = LOCATIONS.filter(loc => {
-    const matchTab    = tab === 'all' || loc.category === tab;
-    const q           = query.toLowerCase().trim();
-    const matchSearch = !q
-      || loc.name.toLowerCase().includes(q)
-      || loc.shortName.toLowerCase().includes(q)
-      || loc.tags.some(t => t.toLowerCase().includes(q))
-      || (CAT[loc.category] && CAT[loc.category].label.toLowerCase().includes(q));
-    return matchTab && matchSearch;
-  });
+  const locations = filterLocations(LOCATIONS, tab, query, CAT);
 
   const handleSelect = useCallback((loc) => { setSelected(loc); setFlyTo(loc); }, []);
   const handleClose  = useCallback(() => { setSelected(null); setFlyTo(null); }, []);
@@ -248,7 +263,7 @@ export default function App() {
   return (
     <div className="w-screen h-screen flex flex-col overflow-hidden">
       {/* Header */}
-      <header className="shrink-0 flex items-center justify-between px-5 h-14 bg-white/90 dark:bg-[#080c18]/92 backdrop-blur-xl border-b border-slate-200 dark:border-white/5 z-50 transition-colors duration-300">
+      <header className="shrink-0 flex items-center justify-between px-5 max-[640px]:px-3 h-14 bg-white/90 dark:bg-[#080c18]/92 backdrop-blur-xl border-b border-slate-200 dark:border-white/5 z-50 transition-colors duration-300">
         <div className="flex items-center gap-3">
           <div className="pulse-glow w-9 h-9 rounded-xl shrink-0 bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
             <Navigation size={17} className="text-white" />
@@ -257,12 +272,13 @@ export default function App() {
             <h1 className="m-0 text-[15.5px] font-bold text-slate-800 dark:text-slate-50 font-['Space_Grotesk'] tracking-tight leading-tight">
               Thapar Navigator
             </h1>
-            <p className="m-0 text-[10.5px] text-slate-500 dark:text-slate-400">Campus Wayfinding System</p>
+            <p className="m-0 text-[10.5px] text-slate-500 dark:text-slate-400 max-[640px]:hidden">Campus Wayfinding System</p>
           </div>
         </div>
-        <div className="flex items-center gap-3.5">
+        <div className="flex items-center gap-3.5 max-[640px]:gap-2">
           <button 
             onClick={toggleTheme}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
             className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/20 transition-all border border-slate-200 dark:border-transparent outline-none cursor-pointer"
             title="Toggle Theme"
           >
@@ -271,6 +287,7 @@ export default function App() {
 
           <button 
             onClick={() => setShowSOS(true)}
+            aria-label="Open emergency SOS contacts"
             className="flex items-center gap-1.5 text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-red-100 dark:bg-red-500/15 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/30 cursor-pointer transition-all hover:bg-red-200 dark:hover:bg-red-500/25 hover:shadow-[0_0_12px_rgba(239,68,68,0.3)] outline-none"
           >
             <AlertTriangle size={14} /> SOS
@@ -291,57 +308,17 @@ export default function App() {
       <div className="flex-1 flex overflow-hidden">
 
         {/* Sidebar */}
-        <aside className="w-[280px] shrink-0 flex flex-col bg-white/80 dark:bg-[#070a14]/88 border-r border-slate-200 dark:border-white/5 transition-colors duration-300">
-          {/* Search */}
-          <div className="p-3 pb-1.5">
-            <div className="relative">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-              <input
-                id="location-search"
-                type="text"
-                placeholder="Search COS, Library, Mess..."
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                className="w-full py-2.5 pr-8 pl-8 rounded-xl outline-none bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-slate-200 text-[12.5px] transition-colors focus:border-blue-400 dark:focus:border-blue-500/50 focus:bg-white dark:focus:bg-[#0c101e]"
-              />
-              {query && (
-                <button onClick={() => setQuery('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer p-1 flex">
-                  <X size={13} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300" />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Tabs */}
-          <div className="px-2.5 pb-2 flex gap-1 overflow-x-auto shrink-0 scrollbar-hide">
-            {TABS.map(t => {
-              const Icon   = t.icon;
-              const active = tab === t.id;
-              const cat    = CAT[t.id];
-              return (
-                <button
-                  key={t.id}
-                  onClick={() => setTab(t.id)}
-                  className={`shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium cursor-pointer outline-none transition-all ${
-                    active 
-                      ? 'bg-slate-200 dark:bg-white/10 text-slate-800 dark:text-slate-100 shadow-sm'
-                      : 'bg-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5'
-                  }`}
-                  style={active && cat ? { backgroundColor: `${cat.color}25`, color: cat.color, border: `1px solid ${cat.color}40` } : { border: '1px solid transparent' }}
-                >
-                  <Icon size={11} />{t.label}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Count */}
-          <div className="px-3.5 pb-1.5">
-            <p className="m-0 text-[10.5px] text-slate-500 dark:text-slate-400">
-              {locations.length} location{locations.length !== 1 ? 's' : ''}
-              {query && <span className="text-slate-700 dark:text-slate-300"> &middot; &ldquo;{query}&rdquo;</span>}
-            </p>
-          </div>
+        <aside className="w-[280px] max-[640px]:w-[220px] shrink-0 flex flex-col bg-white/80 dark:bg-[#070a14]/88 border-r border-slate-200 dark:border-white/5 transition-colors duration-300">
+          <LocationFilters
+            query={query}
+            onQueryChange={setQuery}
+            onClearQuery={() => setQuery('')}
+            tab={tab}
+            onTabChange={setTab}
+            tabs={TABS}
+            categories={CAT}
+            resultCount={locations.length}
+          />
 
           {/* List */}
           <div className="flex-1 overflow-y-auto px-2 pb-2">
@@ -363,7 +340,7 @@ export default function App() {
         </aside>
 
         {/* Map */}
-        <main className="flex-1 relative overflow-hidden bg-[#e5e7eb] dark:bg-[#0b0f19] transition-colors duration-300">
+        <main className="flex-1 relative overflow-hidden bg-[#e5e7eb] dark:bg-[#0b0f19] transition-colors duration-300" aria-label="Interactive campus map">
           <MapContainer
             center={[30.3564, 76.3625]}
             zoom={16}
@@ -381,6 +358,8 @@ export default function App() {
               <Marker
                 key={loc.id}
                 position={[loc.lat, loc.lng]}
+                alt={loc.name}
+                title={`Open details for ${loc.name}`}
                 icon={mkIcon(loc.category, selected ? selected.id === loc.id : false, theme)}
                 eventHandlers={{ click: () => handleSelect(loc) }}
               >

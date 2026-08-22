@@ -3,11 +3,19 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ── Global Reset ─────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-html, body, #root {
-  width: 100%; height: 100%;
-  margin: 0; padding: 0;
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   text-align: left;
@@ -18,10 +26,22 @@ html, body, #root {
 }
 
 /* ── Scrollbar ────────────────────────────────────────── */
-::-webkit-scrollbar            { width: 4px; height: 4px; }
-::-webkit-scrollbar-track      { background: transparent; }
-::-webkit-scrollbar-thumb      { @apply bg-slate-300 dark:bg-white/10 rounded-full; }
-::-webkit-scrollbar-thumb:hover{ @apply bg-slate-400 dark:bg-white/20; }
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 dark:bg-white/10 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-400 dark:bg-white/20;
+}
 
 /* ── Leaflet overrides ───────────────────────────── */
 .leaflet-popup-content-wrapper {
@@ -29,45 +49,93 @@ html, body, #root {
   @apply text-slate-800 dark:text-[#e2e8f0];
   @apply border border-slate-200 dark:border-white/10;
   border-radius: 14px !important;
-  @apply shadow-xl dark:shadow-[0_24px_64px_rgba(0,0,0,0.7)];
+  @apply shadow-xl dark:shadow-[0_24px_64px_rgba(0, 0, 0, 0.7)];
   padding: 0 !important;
 }
+
 .leaflet-popup-content {
   margin: 14px 16px !important;
   line-height: 1.5 !important;
 }
-.leaflet-popup-tip-container { display: none; }
+
+.leaflet-popup-tip-container {
+  display: none;
+}
+
 .leaflet-popup-close-button {
-  @apply text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-400 !important;
+  @apply text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-400;
   font-size: 20px !important;
   padding: 6px 8px !important;
 }
+
 .leaflet-control-attribution {
   @apply bg-white/80 dark:bg-[#080c18]/85 text-slate-500 dark:text-slate-600;
   font-size: 10px !important;
   border-radius: 6px 0 0 0 !important;
   backdrop-filter: blur(8px) !important;
 }
-.leaflet-control-attribution a { @apply text-blue-500 dark:text-blue-400 !important; }
+
+.leaflet-control-attribution a {
+  @apply text-blue-500 dark:text-blue-400;
+}
 
 /* ── Animations ───────────────────────────────────────── */
 @keyframes fadeSlideIn {
-  from { opacity: 0; transform: translateY(12px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0)   scale(1); }
-}
-@keyframes pulseGlow {
-  0%,100% { box-shadow: 0 0 16px rgba(59,130,246,0.35); }
-  50%     { box-shadow: 0 0 32px rgba(59,130,246,0.65); }
-}
-@keyframes pulseGlowRed {
-  0%,100% { box-shadow: 0 0 16px rgba(239,68,68,0.35); }
-  50%     { box-shadow: 0 0 32px rgba(239,68,68,0.65); }
-}
-@keyframes markerPop {
-  0%   { transform: scale(0); opacity: 0; }
-  70%  { transform: scale(1.2); }
-  100% { transform: scale(1); opacity: 1; }
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
-.fade-slide-in { animation: fadeSlideIn 0.28s cubic-bezier(.16,1,.3,1) forwards; }
-.pulse-glow    { animation: pulseGlow 2.4s ease-in-out infinite; }
+@keyframes pulseGlow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 16px rgba(59, 130, 246, 0.35);
+  }
+
+  50% {
+    box-shadow: 0 0 32px rgba(59, 130, 246, 0.65);
+  }
+}
+
+@keyframes pulseGlowRed {
+
+  0%,
+  100% {
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.35);
+  }
+
+  50% {
+    box-shadow: 0 0 32px rgba(239, 68, 68, 0.65);
+  }
+}
+
+@keyframes markerPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  70% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.fade-slide-in {
+  animation: fadeSlideIn 0.28s cubic-bezier(.16, 1, .3, 1) forwards;
+}
+
+.pulse-glow {
+  animation: pulseGlow 2.4s ease-in-out infinite;
+}

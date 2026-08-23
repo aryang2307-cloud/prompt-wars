@@ -57,24 +57,28 @@ function FriendMarkerController({ requestId, onLocation }) {
   const map = useMap();
 
   useEffect(() => {
+    let cancelled = false;
+    const updateLocation = (location) => {
+      if (cancelled) return;
+      onLocation(location);
+      map.flyTo([location.lat, location.lng], 17, { duration: 1 });
+    };
+
     if (!requestId) return;
     if (!navigator.geolocation) {
-      onLocation(CAMPUS_CENTER);
-      map.flyTo([CAMPUS_CENTER.lat, CAMPUS_CENTER.lng], 17, { duration: 1 });
-      return;
+      updateLocation(CAMPUS_CENTER);
+      return () => { cancelled = true; };
     }
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
-        const location = { lat: coords.latitude, lng: coords.longitude };
-        onLocation(location);
-        map.flyTo([location.lat, location.lng], 17, { duration: 1 });
+        updateLocation({ lat: coords.latitude, lng: coords.longitude });
       },
       () => {
-        onLocation(CAMPUS_CENTER);
-        map.flyTo([CAMPUS_CENTER.lat, CAMPUS_CENTER.lng], 17, { duration: 1 });
+        updateLocation(CAMPUS_CENTER);
       },
       { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 },
     );
+    return () => { cancelled = true; };
   }, [map, onLocation, requestId]);
 
   return null;
@@ -182,18 +186,18 @@ function LocCard({ loc, isSelected, onSelect }) {
     >
       <div className="flex items-start gap-2.5">
         <div className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center border" style={{ backgroundColor: `${c.color}15`, borderColor: `${c.color}30` }}>
-          <Icon size={15} color={c.color} />
+          <Icon aria-hidden="true" size={15} color={c.color} />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-1">
             <p className="m-0 text-[12.5px] font-semibold text-slate-800 dark:text-slate-100 overflow-hidden text-ellipsis whitespace-nowrap">{loc.name}</p>
-            <ChevronRight size={13} className="shrink-0 text-slate-400 dark:text-slate-600" />
+            <ChevronRight aria-hidden="true" size={13} className="shrink-0 text-slate-400 dark:text-slate-600" />
           </div>
           {canteenOpen !== null && <span className={`inline-flex mt-1 rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${canteenOpen ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300' : 'bg-slate-100 text-slate-500 dark:bg-white/10 dark:text-slate-400'}`}>{canteenOpen ? 'Open now' : 'Closed now'}</span>}
           {crowdStatus && <span className={`inline-flex mt-1 ml-1 rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${crowdStatus.tone === 'red' ? 'bg-red-100 text-red-700' : crowdStatus.tone === 'amber' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>{crowdStatus.label}</span>}
           <Stars rating={loc.rating} />
           <p className="m-0 mt-1 text-[10.5px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
-            <Clock size={10} /> {loc.timing}
+            <Clock aria-hidden="true" size={10} /> {loc.timing}
           </p>
         </div>
       </div>

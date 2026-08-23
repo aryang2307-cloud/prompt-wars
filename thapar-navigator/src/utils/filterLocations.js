@@ -8,15 +8,20 @@
  * @returns {Array<Object>} Locations matching both filters.
  */
 export function filterLocations(locations, category, query, categories) {
-  const normalizedQuery = query.toLowerCase().trim();
+  const normalizedQuery = typeof query === 'string' ? query.toLowerCase().trim() : '';
+  const categoryMap = categories || {};
 
-  return locations.filter((location) => {
+  return (Array.isArray(locations) ? locations : []).filter((location) => {
+    if (!location || typeof location.name !== 'string') return false;
+    if (!Number.isFinite(location.lat) || !Number.isFinite(location.lng)) return false;
+
     const matchesCategory = category === 'all' || location.category === category;
-    const categoryLabel = categories[location.category]?.label || '';
+    const categoryLabel = categoryMap[location.category]?.label || '';
+    const tags = Array.isArray(location.tags) ? location.tags : [];
     const matchesSearch = !normalizedQuery
       || location.name.toLowerCase().includes(normalizedQuery)
-      || location.shortName.toLowerCase().includes(normalizedQuery)
-      || location.tags.some((tag) => tag.toLowerCase().includes(normalizedQuery))
+      || (location.shortName || '').toLowerCase().includes(normalizedQuery)
+      || tags.some((tag) => typeof tag === 'string' && tag.toLowerCase().includes(normalizedQuery))
       || categoryLabel.toLowerCase().includes(normalizedQuery);
 
     return matchesCategory && matchesSearch;

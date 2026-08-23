@@ -45,13 +45,27 @@ body,
 
 /* ── Leaflet overrides ───────────────────────────── */
 .leaflet-popup-content-wrapper {
-  @apply bg-white/95 dark:bg-[#0c101e]/97 backdrop-blur-xl;
-  @apply text-slate-800 dark:text-[#e2e8f0];
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  color: #1e293b !important;
+  @apply backdrop-blur-xl;
   @apply border border-slate-200 dark:border-white/10;
   border-radius: 14px !important;
   @apply shadow-xl;
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7) !important;
   padding: 0 !important;
+}
+
+.dark .leaflet-popup-content-wrapper {
+  background-color: rgba(15, 23, 42, 0.97) !important;
+  color: #f1f5f9 !important;
+}
+
+.leaflet-popup-tip {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.dark .leaflet-popup-tip {
+  background-color: rgba(15, 23, 42, 0.97) !important;
 }
 
 .leaflet-popup-content {
@@ -139,4 +153,21 @@ body,
 
 .pulse-glow {
   animation: pulseGlow 2.4s ease-in-out infinite;
+}
+
+.emergency-marker {
+  animation: emergencyMarkerPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes emergencyMarkerPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.55);
+  }
+
+  50% {
+    transform: scale(1.35);
+    box-shadow: 0 0 26px rgba(239, 68, 68, 0.95);
+  }
 }

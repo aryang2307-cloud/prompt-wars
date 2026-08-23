@@ -1,4 +1,4 @@
-import { GraduationCap, Home, Utensils, Dumbbell, Shield, MapPin } from 'lucide-react';
+import { GraduationCap, Home, Utensils, Dumbbell, Shield, MapPin, Printer } from 'lucide-react';
 
 
 export const CAT = {
@@ -7,6 +7,7 @@ export const CAT = {
   food: { label: 'Food', color: '#fbbf24', glow: 'rgba(251,191,36,0.5)', icon: Utensils },
   recreation: { label: 'Recreation', color: '#34d399', glow: 'rgba(52,211,153,0.5)', icon: Dumbbell },
   facility: { label: 'Facility', color: '#f87171', glow: 'rgba(248,113,113,0.5)', icon: Shield },
+  stationery: { label: 'Print & Stationery', color: '#f97316', glow: 'rgba(249,115,22,0.5)', icon: Printer },
 };
 
 export const TABS = [
@@ -16,6 +17,7 @@ export const TABS = [
   { id: 'food', label: 'Food', icon: Utensils },
   { id: 'recreation', label: 'Recreation', icon: Dumbbell },
   { id: 'facility', label: 'Facilities', icon: Shield },
+  { id: 'stationery', label: 'Print & Stationery', icon: Printer },
 ];
 
 export const LOCATIONS = [
@@ -24,11 +26,13 @@ export const LOCATIONS = [
   { id: 2, name: 'C-Block (Civil & Mechanical)', shortName: 'C-Block', category: 'academic', lat: 30.353586404594573, lng: 76.37130970699148, description: 'Engineering lecture halls and structural labs.', rating: 4.5, timing: '8AM - 6PM', tags: ['Civil', 'Mechanical'] },
   { id: 3, name: 'E-Block (Electrical & ECE)', shortName: 'E-Block', category: 'academic', lat: 30.35360328413548, lng: 76.37246379912739, description: 'Electrical and communication engineering labs.', rating: 4.5, timing: '8AM - 6PM', tags: ['Electrical', 'ECE'] },
   { id: 4, name: 'F-Block', shortName: 'F-Block', category: 'academic', lat: 30.35405903063962, lng: 76.37206280101238, description: 'Lecture theaters and general classes.', rating: 4.4, timing: '8AM - 6PM', tags: ['Classes'] },
-  { id: 5, name: 'G-Block / Nava Nalanda Central Library', shortName: 'Library', category: 'academic', lat: 30.35432431772888, lng: 76.36957527732085, description: 'Multi-story central library and digital resource hub.', rating: 4.9, timing: '24 Hours', tags: ['Library', 'Study'] },
+  { id: 5, name: 'Nava Nalanda Central Library', shortName: 'Library', category: 'academic', lat: 30.35432431772888, lng: 76.36957527732085, description: 'Multi-story central library and digital resource hub.', rating: 4.9, timing: '24 Hours', tags: ['Library', 'Study'] },
+  { id: 50, name: 'G-Block', shortName: 'G-Block', category: 'academic', lat: 30.354694, lng: 76.369832, description: 'Academic block adjoining the central library complex.', rating: 4.6, timing: '8AM - 6PM', tags: ['Classes', 'Lecture Halls'] },
   { id: 6, name: 'CSED (Computer Science Department)', shortName: 'CSED', category: 'academic', lat: 30.355012715531565, lng: 76.36983286028233, description: 'Computer science labs, servers, and faculty offices.', rating: 4.7, timing: '9AM - 5PM', tags: ['CS', 'Labs'] },
   { id: 7, name: 'Chemical & Biotechnology Block', shortName: 'Chem/Biotech', category: 'academic', lat: 30.353130655891547, lng: 76.37103585462741, description: 'Biotech and chemical research facilities.', rating: 4.4, timing: '8AM - 6PM', tags: ['Chemical', 'Biotech'] },
   { id: 9, name: 'Thapar School of Liberal Arts & Sciences (TSLAS)', shortName: 'TSLAS', category: 'academic', lat: 30.3563630499533, lng: 76.37210192278482, description: 'Liberal arts block.', rating: 4.6, timing: '9AM - 5PM', tags: ['Liberal Arts'] },
   { id: 10, name: 'Central Workshop', shortName: 'Workshop', category: 'academic', lat: 30.354616051274284, lng: 76.37083046535426, description: 'Manufacturing shops and team labs.', rating: 4.7, timing: '8AM - 5PM', tags: ['Workshop'] },
+  { id: 51, name: 'Campus Print & Stationery Hub', shortName: 'Print Hub', category: 'stationery', lat: 30.35488, lng: 76.36942, description: 'Photocopying, printing, binding, and submission supplies.', rating: 4.5, timing: '8AM - 7PM', tags: ['Printing', 'Photocopy', 'Stationery'] },
 
   // --- HOSTELS (BOYS & GIRLS HALLS) ---
   { id: 11, name: 'Agira Hall (Hostel A)', shortName: 'Agira', category: 'hostel', lat: 30.351855424193428, lng: 76.36453844002664, description: 'Student residential hall.', rating: 4.2, timing: '24 Hours', tags: ['Hostel'] },
@@ -53,6 +57,7 @@ export const LOCATIONS = [
   { id: 28, name: 'COS Complex (Centre of Science)', shortName: 'COS', category: 'food', lat: 30.354151801481002, lng: 76.36228835918133, description: 'Primary food hub, cafes, and juice bars.', rating: 4.8, timing: '8AM - 8PM', tags: ['Food', 'Shops'] },
   { id: 44, name: 'Kravings', shortName: 'Kravings', category: 'food', lat: 30.353620781769585, lng: 76.36678103233044, description: 'Popular campus eatery and hangout spot.', rating: 4.6, timing: '10AM - 10PM', tags: ['Food', 'Hangout'] },
   { id: 30, name: 'Nescafe Outlets', shortName: 'Nescafe', category: 'food', lat: 30.35276074267857, lng: 76.37005432239691, description: 'Quick beverage and snack spots.', rating: 4.5, timing: '8AM - 8PM', tags: ['Coffee', 'Snacks'] },
+  { id: 52, name: 'COS Photocopy & Supplies', shortName: 'COS Copy Shop', category: 'stationery', lat: 30.35402, lng: 76.36254, description: 'Convenient photocopy and stationery counter near COS Complex.', rating: 4.3, timing: '9AM - 8PM', tags: ['Printing', 'Photocopy', 'Supplies'] },
 
   // --- SPORTS & RECREATION ---
   { id: 34, name: 'Olympiad Sized Swimming Pool', shortName: 'Pool', category: 'recreation', lat: 30.3545364041414, lng: 76.365897481828, description: 'Campus swimming pool facility.', rating: 4.7, timing: '6AM - 8PM', tags: ['Sports', 'Pool'] },

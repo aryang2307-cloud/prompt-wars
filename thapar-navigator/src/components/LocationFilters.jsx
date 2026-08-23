@@ -1,4 +1,4 @@
-import { Search, X } from 'lucide-react';
+import { MapPin, Search, X } from 'lucide-react';
 
 /**
  * Render the search field and category filter tabs for campus locations.
@@ -7,6 +7,9 @@ import { Search, X } from 'lucide-react';
  * @returns {JSX.Element} The location filter controls.
  */
 export function LocationFilters({ query, onQueryChange, onClearQuery, tab, onTabChange, tabs, categories, resultCount }) {
+  const safeTabs = Array.isArray(tabs) ? tabs : [];
+  const categoryMap = categories || {};
+
   return (
     <>
       <div className="p-3 pb-1.5">
@@ -18,11 +21,11 @@ export function LocationFilters({ query, onQueryChange, onClearQuery, tab, onTab
             aria-label="Search campus locations"
             placeholder="Search COS, Library, Mess..."
             value={query}
-            onChange={(event) => onQueryChange(event.target.value)}
+            onChange={(event) => onQueryChange?.(event.target.value)}
             className="w-full py-2.5 pr-8 pl-8 rounded-xl outline-none bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-slate-200 text-[12.5px] transition-colors focus:border-blue-400 dark:focus:border-blue-500/50 focus:bg-white dark:focus:bg-[#0c101e]"
           />
           {query && (
-            <button onClick={onClearQuery} aria-label="Clear location search" className="absolute right-2.5 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer p-1 flex">
+            <button onClick={() => onClearQuery?.()} aria-label="Clear location search" className="absolute right-2.5 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer p-1 flex">
               <X aria-hidden="true" size={13} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300" />
             </button>
           )}
@@ -30,16 +33,17 @@ export function LocationFilters({ query, onQueryChange, onClearQuery, tab, onTab
       </div>
 
       <div className="px-2.5 pb-2 flex gap-1 overflow-x-auto shrink-0 scrollbar-hide" role="tablist" aria-label="Filter locations by category">
-        {tabs.map((filterTab) => {
-          const Icon = filterTab.icon;
+        {safeTabs.map((filterTab) => {
+          const Icon = filterTab.icon || MapPin;
           const active = tab === filterTab.id;
-          const category = categories[filterTab.id];
+          const category = categoryMap[filterTab.id];
+          const label = filterTab.label || filterTab.id || 'Location';
           return (
             <button
               key={filterTab.id}
-              onClick={() => onTabChange(filterTab.id)}
+              onClick={() => onTabChange?.(filterTab.id)}
               role="tab"
-              aria-label={`Show ${filterTab.label.toLowerCase()} locations`}
+              aria-label={`Show ${label.toLowerCase()} locations`}
               aria-selected={active}
               className={`shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium cursor-pointer outline-none transition-all ${
                 active
@@ -48,7 +52,7 @@ export function LocationFilters({ query, onQueryChange, onClearQuery, tab, onTab
               }`}
               style={active && category ? { backgroundColor: `${category.color}25`, color: category.color, border: `1px solid ${category.color}40` } : { border: '1px solid transparent' }}
             >
-              <Icon aria-hidden="true" size={11} />{filterTab.label}
+              <Icon aria-hidden="true" size={11} />{label}
             </button>
           );
         })}

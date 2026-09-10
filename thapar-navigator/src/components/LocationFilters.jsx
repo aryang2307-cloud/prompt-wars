@@ -22,7 +22,7 @@ export function LocationFilters({ query, onQueryChange, onClearQuery, tab, onTab
             placeholder="Search COS, Library, Mess..."
             value={query}
             onChange={(event) => onQueryChange?.(event.target.value)}
-            className="w-full py-2.5 pr-8 pl-8 rounded-xl outline-none bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-slate-200 text-[12.5px] transition-colors focus:border-blue-400 dark:focus:border-blue-500/50 focus:bg-white dark:focus:bg-[#0c101e]"
+            className="w-full py-2.5 pr-8 pl-8 rounded-xl outline-none bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-[12.5px] transition-colors focus:border-blue-400 dark:focus:border-blue-500/50 focus:bg-white dark:focus:bg-[#0c101e]"
           />
           {query && (
             <button onClick={() => onClearQuery?.()} aria-label="Clear location search" className="absolute right-2.5 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer p-1 flex">

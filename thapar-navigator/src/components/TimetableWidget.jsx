@@ -5,7 +5,7 @@ export function TimetableWidget({ locations = [], onSelect }) {
 
   return (
     <form
-      className="mx-3 mb-2 rounded-xl border border-slate-200 bg-white/60 p-2.5 dark:border-white/10 dark:bg-white/5"
+      className="mx-3 mb-2 rounded-xl border border-slate-200 bg-white/60 p-2.5 dark:border-slate-800 dark:bg-slate-900"
       onSubmit={(event) => {
         event.preventDefault();
         const location = lectureHalls.find((item) => item.id === Number(event.currentTarget.elements.hall.value));
@@ -16,7 +16,7 @@ export function TimetableWidget({ locations = [], onSelect }) {
         <School aria-hidden="true" size={12} /> Classroom &amp; hall locator
       </label>
       <div className="flex gap-1.5">
-        <select id="lecture-hall" name="hall" defaultValue="" aria-label="Select a classroom, lab, or exam venue" className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs text-slate-700 outline-none focus:border-blue-400 dark:border-white/10 dark:bg-[#0c101e] dark:text-slate-200">
+        <select id="lecture-hall" name="hall" defaultValue="" aria-label="Select a classroom, lab, or exam venue" className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs text-slate-700 outline-none focus:border-blue-400 dark:border-slate-800 dark:bg-[#0c101e] dark:text-slate-200">
           <option value="" disabled>Select classroom or hall</option>
           {lectureHalls.map((location) => <option key={location.id} value={location.id}>{location.shortName || location.name}</option>)}
         </select>

@@ -40,36 +40,34 @@ body,
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-300 dark:bg-white/10 rounded-full;
+  @apply bg-slate-300 dark:bg-slate-700 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-slate-400 dark:bg-white/20;
+  @apply bg-slate-400 dark:bg-slate-600;
 }
 
 /* ── Leaflet overrides ───────────────────────────── */
 .leaflet-popup-content-wrapper {
-  background-color: rgba(255, 255, 255, 0.95) !important;
+  background-color: #fff !important;
   color: #1e293b !important;
-  @apply backdrop-blur-xl;
-  @apply border border-slate-200 dark:border-white/10;
+  @apply border border-slate-200 dark:border-slate-800;
   border-radius: 14px !important;
-  @apply shadow-xl;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
   padding: 0 !important;
 }
 
 .dark .leaflet-popup-content-wrapper {
-  background-color: rgba(15, 23, 42, 0.97) !important;
+  background-color: #0f172a !important;
   color: #f1f5f9 !important;
 }
 
 .leaflet-popup-tip {
-  background-color: rgba(255, 255, 255, 0.95) !important;
+  background-color: #fff !important;
 }
 
 .dark .leaflet-popup-tip {
-  background-color: rgba(15, 23, 42, 0.97) !important;
+  background-color: #0f172a !important;
 }
 
 .leaflet-popup-content {
@@ -88,10 +86,9 @@ body,
 }
 
 .leaflet-control-attribution {
-  @apply bg-white/80 dark:bg-[#080c18]/85 text-slate-500 dark:text-slate-600;
+  @apply bg-white dark:bg-[#080c18] text-slate-500 dark:text-slate-600;
   font-size: 10px !important;
   border-radius: 6px 0 0 0 !important;
-  backdrop-filter: blur(8px) !important;
 }
 
 .leaflet-control-attribution a {
@@ -115,11 +112,11 @@ body,
 
   0%,
   100% {
-    box-shadow: 0 0 16px rgba(59, 130, 246, 0.35);
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.2);
   }
 
   50% {
-    box-shadow: 0 0 32px rgba(59, 130, 246, 0.65);
+    box-shadow: 0 0 16px rgba(59, 130, 246, 0.35);
   }
 }
 
@@ -127,11 +124,11 @@ body,
 
   0%,
   100% {
-    box-shadow: 0 0 16px rgba(239, 68, 68, 0.35);
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
   }
 
   50% {
-    box-shadow: 0 0 32px rgba(239, 68, 68, 0.65);
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.35);
   }
 }
 
@@ -167,11 +164,11 @@ body,
   0%,
   100% {
     transform: scale(1);
-    box-shadow: 0 0 10px rgba(239, 68, 68, 0.55);
+    box-shadow: 0 0 6px rgba(239, 68, 68, 0.3);
   }
 
   50% {
     transform: scale(1.35);
-    box-shadow: 0 0 26px rgba(239, 68, 68, 0.95);
+    box-shadow: 0 0 14px rgba(239, 68, 68, 0.5);
   }
 }
